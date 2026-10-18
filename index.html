@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SkillMatch helps you compare a resume with a job description and spot relevant skills and keywords.">
+  <meta name="theme-color" content="#f7f5ff">
+  <title>SkillMatch — Resume Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="SkillMatch home"><span class="brand-mark">S</span><span>SkillMatch</span></a>
+    <div class="topbar-note"><span class="live-dot"></span> YOUR CAREER TOOLKIT</div>
+    <a class="github-link" href="https://github.com/" target="_blank" rel="noopener noreferrer">Built for your next step ↗</a>
+  </header>
+
+  <main class="shell">
+    <section class="intro">
+      <div class="eyebrow"><span class="eyebrow-line"></span> RESUME INTELLIGENCE, SIMPLIFIED</div>
+      <h1>Make your next move<br>with <span>more confidence.</span></h1>
+      <p>Compare your resume with a role you're interested in. Discover relevant skills, missing keywords, and practical ways to tailor your application.</p>
+      <div class="trust-row"><span>✓ Runs in your browser</span><span>✓ No account required</span><span>✓ Your resume isn't uploaded to a server</span></div>
+    </section>
+
+    <section class="workspace" aria-label="Resume analysis workspace">
+      <div class="panel input-panel">
+        <div class="panel-heading">
+          <div><span class="step-label">STEP 01</span><h2>Add your resume</h2></div>
+          <span class="heading-icon">↥</span>
+        </div>
+        <p class="panel-copy">Choose a PDF or plain-text file. You can also paste resume text below.</p>
+
+        <label class="upload-zone" id="drop-zone" for="resume-file">
+          <span class="upload-icon">↑</span>
+          <strong>Drop your resume here</strong>
+          <span>or <u>browse files</u></span>
+          <small>PDF or TXT · Keep it under 5 MB</small>
+          <input id="resume-file" type="file" accept=".pdf,.txt,application/pdf,text/plain">
+        </label>
+        <div class="file-status" id="file-status" aria-live="polite">No file selected yet</div>
+
+        <label class="field-label" for="resume-text">Resume text <span>Required</span></label>
+        <textarea id="resume-text" rows="8" placeholder="Paste your resume text here, including skills, projects, education, and experience…"></textarea>
+        <div class="field-foot"><span>Tip: include your project descriptions and technical skills.</span><span id="resume-count">0 characters</span></div>
+
+        <div class="separator"><span>THEN</span></div>
+
+        <div class="panel-heading job-heading">
+          <div><span class="step-label">STEP 02</span><h2>Add the job description</h2></div>
+          <span class="heading-icon">⌕</span>
+        </div>
+        <p class="panel-copy">Paste the role requirements from the job posting you're targeting.</p>
+        <label class="field-label" for="job-text">Job description <span>Required</span></label>
+        <textarea id="job-text" rows="8" placeholder="Paste the job description here. Include responsibilities, required skills, and qualifications…"></textarea>
+        <div class="field-foot"><span>More detail usually gives a more useful comparison.</span><span id="job-count">0 characters</span></div>
+
+        <button class="analyze-button" id="analyze-button" type="button"><span>Analyze my match</span><span aria-hidden="true">↗</span></button>
+        <p class="privacy-note"><span>♧</span> Analysis happens locally in your browser. Don't treat the score as a hiring prediction.</p>
+        <div class="error-message" id="error-message" role="alert" hidden></div>
+      </div>
+
+      <aside class="panel results-panel" id="results-panel">
+        <div class="results-top">
+          <div><span class="step-label">YOUR REPORT</span><h2>Role match overview</h2></div>
+          <span class="report-icon">✦</span>
+        </div>
+        <div class="empty-state" id="empty-state">
+          <div class="empty-illustration"><div class="empty-orbit orbit-a"></div><div class="empty-orbit orbit-b"></div><div class="empty-paper"><span></span><span></span><span></span><i>✦</i></div></div>
+          <h3>Your insights will appear here</h3>
+          <p>Add your resume and a job description, then run your first analysis to see matching skills and suggested next steps.</p>
+          <div class="empty-tip"><span>✧</span><span><strong>Pro tip</strong><br>Tailor your resume honestly to highlight the experience most relevant to each role.</span></div>
+        </div>
+
+        <div class="report" id="report" hidden>
+          <div class="score-card">
+            <div class="score-ring" id="score-ring" style="--score:0">
+              <div class="score-inner"><strong id="match-score">0%</strong><span>keyword overlap</span></div>
+            </div>
+            <div class="score-summary"><span class="score-kicker">YOUR MATCH SNAPSHOT</span><h3 id="score-title">A starting point</h3><p id="score-description">Use this report to guide a closer review.</p></div>
+          </div>
+          <div class="metric-grid">
+            <div class="metric"><span class="metric-symbol matched-symbol">✓</span><strong id="matched-count">0</strong><span>Matched keywords</span></div>
+            <div class="metric"><span class="metric-symbol missing-symbol">＋</span><strong id="missing-count">0</strong><span>Keywords to review</span></div>
+          </div>
+          <section class="result-section">
+            <div class="result-heading"><h3>Skills you already mention</h3><span class="result-count" id="matched-label">0 found</span></div>
+            <p class="result-hint">These terms appeared in both texts.</p>
+            <div class="chips" id="matched-chips"></div>
+          </section>
+          <section class="result-section">
+            <div class="result-heading"><h3>Skills to review</h3><span class="result-count" id="missing-label">0 to review</span></div>
+            <p class="result-hint">Check whether these are relevant to your experience. Only add them if they're accurate.</p>
+            <div class="chips missing-chips" id="missing-chips"></div>
+          </section>
+          <section class="suggestions">
+            <div class="result-heading"><h3>Recommended next steps</h3><span>✧</span></div>
+            <ul id="suggestions-list"></ul>
+          </section>
+          <p class="report-disclaimer">This is a simple keyword comparison, not an ATS simulation, professional evaluation, or prediction of interview outcomes.</p>
+          <button class="reset-button" id="reset-button" type="button">Start a new analysis ↻</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="how-section">
+      <div><span class="step-label">A BETTER APPLICATION, STEP BY STEP</span><h2>Useful feedback.<br><span>No black box.</span></h2></div>
+      <div class="how-items">
+        <article><span>01</span><div><h3>Compare the language</h3><p>See which relevant terms appear in both your resume and the job description.</p></div></article>
+        <article><span>02</span><div><h3>Review the gaps</h3><p>Use missing terms as prompts to review your real experience—not as a list to copy blindly.</p></div></article>
+        <article><span>03</span><div><h3>Improve with evidence</h3><p>Make your projects, impact, and skills easier for a recruiter to understand.</p></div></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><a class="brand footer-brand" href="#"><span class="brand-mark">S</span><span>SkillMatch</span></a><span>Made to help you tell your story more clearly.</span><a href="#top" id="back-top">Back to top ↑</a></footer>
+</body>
+</html>

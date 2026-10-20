@@ -29,7 +29,6 @@ SkillMatch is a browser-based resume analysis tool that helps job seekers evalua
    ```bash
    git clone https://github.com/Diya-Stanly/skillmatch.git
    ```
-
 2. Open the project folder.
 3. Open `index.html` in your browser.
 
